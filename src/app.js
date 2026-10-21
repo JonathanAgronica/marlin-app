@@ -280,7 +280,7 @@ function srcList(){const s=OC?OC.meta.sources:{},e=OC?OC.meta.errors:{};const a=
   <li><b>Weather, waves and model sea level:</b> ${a('https://open-meteo.com/','Open-Meteo')} (CC BY 4.0).</li>
   <li><b>Basemap:</b> Esri World Ocean Base. <b>Map library:</b> Leaflet.</li>
   <li><b>Skipped:</b> Copernicus Marine (needs a login).</li></ul>
-  ${Object.keys(e).length?'<p class="no small">Last refresh errors: '+esc(JSON.stringify(e))+'</p>':''}<p class="small mut">Ocean data refreshed by a GitHub Action twice daily. Built ${esc(OC?OC.meta.built:'')} UTC · app ${window.BUILD}</p>`;}
+  ${Object.keys(e).length?'<p class="no small">Last refresh errors: '+esc(JSON.stringify(e))+'</p>':''}<p class="small mut">Ocean data refreshed twice daily (about 6am and 6pm AEST). Last refresh ${OC?esc(fmtD(Date.parse(OC.meta.built))+' '+fmtT(Date.parse(OC.meta.built))):''} AEST · app ${window.BUILD}</p>`;}
 async function boot(){
   fillDays($('scDay'));fillDays($('plDay'));$('scDay').onchange=renderScore;$('scWhich').onchange=renderScore;
   $('plPort').innerHTML=PORTS.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join('');$('plPort').value=LS.get('port','bh');$('plPort').onchange=renderPlan;$('plDay').onchange=renderPlan;
