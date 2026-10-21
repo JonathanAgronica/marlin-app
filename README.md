@@ -36,9 +36,11 @@ No accounts, analytics or keys. Marks, catches and settings stay in the browser'
 
 Not for navigation. Always check the official BoM forecasts and warnings and MSQ notices before crossing a bar.
 
-## Scheduled refresh (one-time setup)
-The workflow is in `ops/ocean-workflow.yml`. The CLI token used to create this repo has no `workflow` scope, so it couldn't be pushed to `.github/workflows/`. To switch it on, do one of these:
-- run `gh auth refresh -s workflow`, then `mkdir -p .github/workflows && git mv ops/ocean-workflow.yml .github/workflows/ocean.yml && git commit -m "enable ocean refresh" && git push`, **or**
-- on GitHub, choose *Add file → Create new file*, name it `.github/workflows/ocean.yml` and paste the contents in.
+## Scheduled refresh: box routine (active)
+The ocean data is refreshed by `ops/refresh_ocean.sh`, run every hour by the owner's box routine. The script decides for itself whether a refresh is due: the last success was 11 h or more ago and it is 5–8am or 5–8pm AEST, or the last success was more than 14 h ago. That gives about two refreshes a day, near 6am and 6pm.
+- It fetches MUR SST, works out the temperature breaks, then fetches IMOS currents and eddies, and chlorophyll with fallbacks. It commits and pushes `data/` only if something changed (`git pull --rebase`, no force).
+- When a source fails, the last good copy of that layer is kept. If every source fails, nothing is committed.
+- Hard time limit is about 6 minutes. It prints one line: `REFRESHED <ages>`, `SKIPPED not due` or `FAILED <reason>`. The exit code is 2 only on failure. `--force` skips the due check.
+- State and logs are kept in `~/.cache/marlin-refresh/`.
 
-Until then, `data/ocean.json` only updates when `python3 scripts/fetch_ocean.py` is run and committed by hand. The app shows the data age in the header.
+`ops/ocean-workflow.yml` is an **inactive** GitHub Actions alternative, kept for reference. Don't turn both on.

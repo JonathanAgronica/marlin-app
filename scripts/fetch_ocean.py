@@ -19,7 +19,10 @@ OUT = os.path.join(os.path.dirname(__file__), '..', 'data')
 ERD = 'https://coastwatch.pfeg.noaa.gov/erddap/griddap/'
 UA = {'User-Agent': 'macs-marlin/1.0 (github.com/JonathanAgronica/marlin-app)'}
 
-def get(url, tries=3, timeout=120):
+HTTP_TIMEOUT = int(os.environ.get('MARLIN_HTTP_TIMEOUT', '120')); HTTP_TRIES = int(os.environ.get('MARLIN_HTTP_TRIES', '3'))
+
+def get(url, tries=None, timeout=None):
+    tries = tries or HTTP_TRIES; timeout = timeout or HTTP_TIMEOUT
     for i in range(tries):
         try:
             with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
@@ -233,7 +236,7 @@ def main():
         if 'gsla' in layers: layers['slagrad'] = grad(layers['gsla'])  # m per km (eddy rims)
     nd = {'sst': 2, 'chl': 3, 'depth': 0, 'ucur': 2, 'vcur': 2, 'gsla': 2, 'sstgrad': 3, 'dfront': 1, 'chlgrad': 3, 'speed': 2, 'curedge': 4, 'slagrad': 4}
     for k, a in layers.items(): out[k] = r(a, nd.get(k, 3))
-    json.dump(out, open(pf, 'w'), separators=(',', ':'))
+    json.dump(out, open(pf + '.tmp', 'w'), separators=(',', ':')); os.replace(pf + '.tmp', pf)  # atomic: a killed run never leaves a half file
     print('wrote', pf, os.path.getsize(pf) // 1024, 'KB', 'errors:', meta['errors'])
 
 if __name__ == '__main__':
