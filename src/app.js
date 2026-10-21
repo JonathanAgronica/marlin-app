@@ -171,7 +171,7 @@ async function getWx(p){if(WXC[p.id]&&Date.now()-WXC[p.id].at<30*60e3)return WXC
   const [w,m,b]=await Promise.all([
     tfetch(`https://api.open-meteo.com/v1/forecast?${q}&hourly=wind_speed_10m,wind_gusts_10m,wind_direction_10m,cloud_cover,precipitation_probability&wind_speed_unit=kn`),
     tfetch(`https://marine-api.open-meteo.com/v1/marine?${q}&hourly=wave_height,swell_wave_height,swell_wave_period,swell_wave_direction,wind_wave_height,sea_surface_temperature`),
-    fetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${p.lat}&longitude=${p.lon}&timezone=GMT&forecast_days=7&cell_selection=sea&hourly=sea_level_height_msl`).catch(()=>null)]);
+    tfetch(`https://marine-api.open-meteo.com/v1/marine?latitude=${p.lat}&longitude=${p.lon}&timezone=GMT&forecast_days=7&cell_selection=sea&hourly=sea_level_height_msl`).catch(()=>null)]);
   const ts=w.hourly.time.map(s=>Date.parse(s+'Z'));const mi={};m.hourly.time.forEach((s,i)=>mi[Date.parse(s+'Z')]=i);
   const H=ts.map((t,i)=>{const k=mi[t];const g=(a)=>k==null||!m.hourly[a]?null:m.hourly[a][k];return{t,wind:w.hourly.wind_speed_10m[i],gust:w.hourly.wind_gusts_10m[i],dir:w.hourly.wind_direction_10m[i],cloud:w.hourly.cloud_cover[i],rain:w.hourly.precipitation_probability[i],wave:g('wave_height'),swell:g('swell_wave_height'),per:g('swell_wave_period'),sdir:g('swell_wave_direction'),sst:g('sea_surface_temperature')};});
   let tide=null;if(b&&b.hourly){const bt=b.hourly.time.map(s=>Date.parse(s+'Z'));const fn=makeSeries(bt,b.hourly.sea_level_height_msl);tide={fn,ext:tideExtremes(fn,bt[0],bt[bt.length-1])};}
