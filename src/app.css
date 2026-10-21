@@ -36,3 +36,4 @@ nav button.on{color:var(--tx);background:#123553}
 .leaflet-popup-content{font-size:13px;margin:10px 12px;max-width:260px}.leaflet-container{font:inherit}
 .leaflet-popup-content table td{border-color:#ddd;color:#123}
 .warn{border-left:4px solid #ffc14d}
+[hidden]{display:none!important}
