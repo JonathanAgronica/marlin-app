@@ -9,7 +9,8 @@
 "lon": 153.67705,
 "depth": 104,
 "type": "FAD",
-"note": "Surface FAD; 12 from South Passage bar nm"
+"note": "Surface FAD; 12 from South Passage bar nm",
+"st": "QLD"
 },
 {
 "name": "FAD 4: Stradbroke offshore",
@@ -17,7 +18,8 @@
 "lon": 153.62787,
 "depth": 83,
 "type": "FAD",
-"note": "Surface FAD; 9.5 from South Passage Bar nm"
+"note": "Surface FAD; 9.5 from South Passage Bar nm",
+"st": "QLD"
 },
 {
 "name": "FAD 16: Moreton offshore",
@@ -25,7 +27,8 @@
 "lon": 153.6149,
 "depth": 108,
 "type": "FAD",
-"note": "Surface FAD; 13 from South Passage bar nm"
+"note": "Surface FAD; 13 from South Passage bar nm",
+"st": "QLD"
 },
 {
 "name": "FAD 17: Cape Moreton offshore",
@@ -33,7 +36,8 @@
 "lon": 153.55975,
 "depth": 108,
 "type": "FAD",
-"note": "Surface FAD; 5 from Cape Moreton nm"
+"note": "Surface FAD; 5 from Cape Moreton nm",
+"st": "QLD"
 },
 {
 "name": "FAD 6: Bribie offshore",
@@ -41,7 +45,8 @@
 "lon": 153.52958,
 "depth": 100,
 "type": "FAD",
-"note": "Surface FAD; 12 from Comboyuro Point nm"
+"note": "Surface FAD; 12 from Comboyuro Point nm",
+"st": "QLD"
 },
 {
 "name": "FAD 18: Wide Caloundra",
@@ -49,7 +54,8 @@
 "lon": 153.45315,
 "depth": 60,
 "type": "FAD",
-"note": "Surface FAD; 18 from Mooloolaba nm"
+"note": "Surface FAD; 18 from Mooloolaba nm",
+"st": "QLD"
 },
 {
 "name": "FAD 7: Mooloolaba 10nm",
@@ -57,7 +63,8 @@
 "lon": 153.3281,
 "depth": 55,
 "type": "FAD",
-"note": "Surface FAD; 10 from Mooloolaba nm"
+"note": "Surface FAD; 10 from Mooloolaba nm",
+"st": "QLD"
 },
 {
 "name": "FAD 7B: Mooloolaba 10nm",
@@ -65,7 +72,8 @@
 "lon": 153.31108,
 "depth": 56,
 "type": "FAD",
-"note": "Surface FAD; 10 from Mooloolaba nm"
+"note": "Surface FAD; 10 from Mooloolaba nm",
+"st": "QLD"
 },
 {
 "name": "FAD 7C: Mooloolaba 10nm",
@@ -73,7 +81,8 @@
 "lon": 153.34545,
 "depth": 56,
 "type": "FAD",
-"note": "Surface FAD; 10 from Mooloolaba nm"
+"note": "Surface FAD; 10 from Mooloolaba nm",
+"st": "QLD"
 },
 {
 "name": "FAD 8: Mooloolaba east",
@@ -81,7 +90,8 @@
 "lon": 153.56327,
 "depth": 101,
 "type": "FAD",
-"note": "Surface FAD; 24 from Mooloolaba nm"
+"note": "Surface FAD; 24 from Mooloolaba nm",
+"st": "QLD"
 },
 {
 "name": "FAD 20: Noosa",
@@ -89,7 +99,8 @@
 "lon": 153.23833,
 "depth": 52,
 "type": "FAD",
-"note": "Surface FAD; 9 from Noosa nm"
+"note": "Surface FAD; 9 from Noosa nm",
+"st": "QLD"
 },
 {
 "name": "FAD 9: Noosa",
@@ -97,7 +108,8 @@
 "lon": 153.32923,
 "depth": 55,
 "type": "FAD",
-"note": "Surface FAD; 14 from Noosa nm"
+"note": "Surface FAD; 14 from Noosa nm",
+"st": "QLD"
 },
 {
 "name": "FAD 10: Double Island offshore",
@@ -105,7 +117,8 @@
 "lon": 153.36512,
 "depth": 57,
 "type": "FAD",
-"note": "Surface FAD; 16 from Wide Bay Bar nm"
+"note": "Surface FAD; 16 from Wide Bay Bar nm",
+"st": "QLD"
 },
 {
 "name": "FAD 21: K’gari offshore",
@@ -113,7 +126,8 @@
 "lon": 153.37693,
 "depth": 51,
 "type": "FAD",
-"note": "Surface FAD; 17 from Wide Bay bar nm"
+"note": "Surface FAD; 17 from Wide Bay bar nm",
+"st": "QLD"
 },
 {
 "name": "SFAD 2A: Point Lookout continental shelf",
@@ -121,7 +135,8 @@
 "lon": 153.8294,
 "depth": 250,
 "type": "FAD",
-"note": "Subsurface FAD; 19 from South Passage Bar nm"
+"note": "Subsurface FAD; 19 from South Passage Bar nm",
+"st": "QLD"
 },
 {
 "name": "SFAD 2B: Point Lookout continental shelf",
@@ -129,7 +144,8 @@
 "lon": 153.84148,
 "depth": 258,
 "type": "FAD",
-"note": "Subsurface FAD; 20 from South Passage Bar nm"
+"note": "Subsurface FAD; 20 from South Passage Bar nm",
+"st": "QLD"
 },
 {
 "name": "SFAD 2C: Point Lookout continental shelf",
@@ -137,7 +153,8 @@
 "lon": 153.85463,
 "depth": 290,
 "type": "FAD",
-"note": "Subsurface FAD; 20 from South Passage Bar nm"
+"note": "Subsurface FAD; 20 from South Passage Bar nm",
+"st": "QLD"
 },
 {
 "name": "SFAD 3A: Cape Moreton continental shelf",
@@ -145,7 +162,8 @@
 "lon": 153.7653,
 "depth": 269,
 "type": "FAD",
-"note": "Subsurface FAD; 22 from Comboyuro Point nm"
+"note": "Subsurface FAD; 22 from Comboyuro Point nm",
+"st": "QLD"
 },
 {
 "name": "SFAD 3B: Cape Moreton continental shelf",
@@ -153,7 +171,8 @@
 "lon": 153.77827,
 "depth": 280,
 "type": "FAD",
-"note": "Subsurface FAD; 23 from Comboyuro Point nm"
+"note": "Subsurface FAD; 23 from Comboyuro Point nm",
+"st": "QLD"
 },
 {
 "name": "SFAD 3C: Cape Moreton continental shelf",
@@ -161,7 +180,8 @@
 "lon": 153.79272,
 "depth": 295,
 "type": "FAD",
-"note": "Subsurface FAD; 23 from Comboyuro Point nm"
+"note": "Subsurface FAD; 23 from Comboyuro Point nm",
+"st": "QLD"
 },
 {
 "name": "SFAD 4A: Mooloolaba continental shelf",
@@ -169,7 +189,8 @@
 "lon": 153.66852,
 "depth": 233,
 "type": "FAD",
-"note": "Subsurface FAD; 29 from Mooloolaba nm"
+"note": "Subsurface FAD; 29 from Mooloolaba nm",
+"st": "QLD"
 },
 {
 "name": "SFAD 4B: Mooloolaba continental shelf",
@@ -177,7 +198,8 @@
 "lon": 153.67977,
 "depth": 244,
 "type": "FAD",
-"note": "Subsurface FAD; 29 from Mooloolaba nm"
+"note": "Subsurface FAD; 29 from Mooloolaba nm",
+"st": "QLD"
 },
 {
 "name": "SFAD 4C: Mooloolaba continental shelf",
@@ -185,7 +207,8 @@
 "lon": 153.68617,
 "depth": 252,
 "type": "FAD",
-"note": "Subsurface FAD; 30 from Mooloolaba nm"
+"note": "Subsurface FAD; 30 from Mooloolaba nm",
+"st": "QLD"
 },
 {
 "name": "FAD F1: Rooney Point, K’gari",
@@ -193,7 +216,8 @@
 "lon": 153.10252,
 "depth": 34,
 "type": "FAD",
-"note": "Surface FAD; 31 from Urangan nm"
+"note": "Surface FAD; 31 from Urangan nm",
+"st": "QLD"
 },
 {
 "name": "FAD F2: K’gari offshore",
@@ -201,7 +225,8 @@
 "lon": 153.4058,
 "depth": 54,
 "type": "FAD",
-"note": "Surface FAD; 8 from Sandy Cape nm"
+"note": "Surface FAD; 8 from Sandy Cape nm",
+"st": "QLD"
 },
 {
 "name": "FAD F3: K’gari offshore",
@@ -209,7 +234,8 @@
 "lon": 153.54455,
 "depth": 54,
 "type": "FAD",
-"note": "Surface FAD; 11 from Waddy Point nm"
+"note": "Surface FAD; 11 from Waddy Point nm",
+"st": "QLD"
 },
 {
 "name": "FAD B1a: Bundaberg offshore",
@@ -217,7 +243,8 @@
 "lon": 152.54875,
 "depth": 25,
 "type": "FAD",
-"note": "All-water FAD (submerged buoy); 10 from Burnett Heads nm"
+"note": "All-water FAD (submerged buoy); 10 from Burnett Heads nm",
+"st": "QLD"
 },
 {
 "name": "FAD B1b: Bundaberg offshore",
@@ -225,7 +252,8 @@
 "lon": 152.5502,
 "depth": 25,
 "type": "FAD",
-"note": "All-water FAD (submerged buoy); 10 from Burnett Heads nm"
+"note": "All-water FAD (submerged buoy); 10 from Burnett Heads nm",
+"st": "QLD"
 },
 {
 "name": "FAD B1c: Bundaberg offshore",
@@ -233,7 +261,8 @@
 "lon": 152.5487,
 "depth": 25,
 "type": "FAD",
-"note": "All-water FAD (submerged buoy); 10 from Burnett Heads nm"
+"note": "All-water FAD (submerged buoy); 10 from Burnett Heads nm",
+"st": "QLD"
 },
 {
 "name": "FAD B1d: Bundaberg offshore",
@@ -241,7 +270,8 @@
 "lon": 152.54725,
 "depth": 25,
 "type": "FAD",
-"note": "All-water FAD (submerged buoy); 10 from Burnett Heads nm"
+"note": "All-water FAD (submerged buoy); 10 from Burnett Heads nm",
+"st": "QLD"
 },
 {
 "name": "FAD B1: Bundaberg offshore",
@@ -249,7 +279,172 @@
 "lon": 152.54865,
 "depth": 25,
 "type": "FAD",
-"note": "All-water FAD (surface buoy); 10 from Burnett Heads nm"
+"note": "All-water FAD (surface buoy); 10 from Burnett Heads nm",
+"st": "QLD"
+},
+{
+"name": "NSW FAD (1) Tweed Heads",
+"lat": -28.16217,
+"lon": 153.68333,
+"depth": 64,
+"type": "FAD",
+"st": "NSW",
+"note": "Seasonal surface FAD (NSW DPIRD)"
+},
+{
+"name": "NSW FAD (2) Byron Bay",
+"lat": -28.61205,
+"lon": 153.71263,
+"depth": 70,
+"type": "FAD",
+"st": "NSW",
+"note": "Seasonal surface FAD (NSW DPIRD)"
+},
+{
+"name": "NSW FAD (3) Ballina",
+"lat": -28.90717,
+"lon": 153.68648,
+"depth": 70,
+"type": "FAD",
+"st": "NSW",
+"note": "Seasonal surface FAD (NSW DPIRD); Richmond River 14 km from access point"
+},
+{
+"name": "NSW FAD (4) Evans Head",
+"lat": -29.10667,
+"lon": 153.60333,
+"depth": 50,
+"type": "FAD",
+"st": "NSW",
+"note": "Seasonal surface FAD (NSW DPIRD); Evans River 17 km from access point"
+},
+{
+"name": "NSW FAD (5) Yamba",
+"lat": -29.61258,
+"lon": 153.48645,
+"depth": 70,
+"type": "FAD",
+"st": "NSW",
+"note": "Seasonal surface FAD (NSW DPIRD); Clarence River 23 km from access point"
+},
+{
+"name": "NSW FAD (6) Wooli",
+"lat": -29.87838,
+"lon": 153.43528,
+"depth": 65,
+"type": "FAD",
+"st": "NSW",
+"note": "Seasonal surface FAD (NSW DPIRD); Wooli River 16 km from access point"
+},
+{
+"name": "NSW FAD (8) Nambucca",
+"lat": -30.66037,
+"lon": 153.1489,
+"depth": 60,
+"type": "FAD",
+"st": "NSW",
+"note": "Seasonal surface FAD (NSW DPIRD); 13 km from access point"
+},
+{
+"name": "NSW FAD (9) South West Rocks",
+"lat": -30.84223,
+"lon": 153.19672,
+"depth": 104,
+"type": "FAD",
+"st": "NSW",
+"note": "Seasonal surface FAD (NSW DPIRD); Macleay River 16.5 km from access point"
+},
+{
+"name": "NSW FAD (10) Hat Head",
+"lat": -31.0106,
+"lon": 153.12992,
+"depth": 85,
+"type": "FAD",
+"st": "NSW",
+"note": "Seasonal surface FAD (NSW DPIRD); Korogoro Creek 7.5 km from access point"
+},
+{
+"name": "NSW FAD (11) Port Macquarie",
+"lat": -31.43245,
+"lon": 153.07448,
+"depth": 90,
+"type": "FAD",
+"st": "NSW",
+"note": "Seasonal surface FAD (NSW DPIRD); Hastings River 16 km from access point"
+},
+{
+"name": "NSW FAD (12) Laurieton",
+"lat": -31.66002,
+"lon": 152.93725,
+"depth": 65,
+"type": "FAD",
+"st": "NSW",
+"note": "Seasonal surface FAD (NSW DPIRD); Camden Haven 10 km from access point"
+},
+{
+"name": "NSW FAD (13) Crowdy Head",
+"lat": -31.78333,
+"lon": 152.92,
+"depth": 79,
+"type": "FAD",
+"st": "NSW",
+"note": "Seasonal surface FAD (NSW DPIRD); 17 km from access point"
+},
+{
+"name": "NSW FAD (14) Forster",
+"lat": -32.22018,
+"lon": 152.678,
+"depth": 80,
+"type": "FAD",
+"st": "NSW",
+"note": "Seasonal surface FAD (NSW DPIRD); Cape Hawke Harbour 16.5 km from access point"
+},
+{
+"name": "VIC FAD 6: Lorne",
+"lat": -38.54198,
+"lon": 144.03583,
+"depth": null,
+"type": "FAD",
+"st": "VIC",
+"note": "Seasonal (Dec–May); NTM 002(T)/2026; removed June 2026, due back Dec 2026"
+},
+{
+"name": "VIC FAD 7: Aireys Inlet",
+"lat": -38.49047,
+"lon": 144.1646,
+"depth": null,
+"type": "FAD",
+"st": "VIC",
+"note": "Seasonal (Dec–May); NTM 002(T)/2026; removed June 2026, due back Dec 2026"
+},
+{
+"name": "VIC FADs 1-5: Torquay artificial reef",
+"lat": -38.33317,
+"lon": 144.374,
+"depth": 25,
+"type": "FAD",
+"st": "VIC",
+"note": "Seasonal (Dec–May); 5 FADs on the Torquay reef (VFA); removed June 2026, due back Dec 2026"
+}
+],
+"sources": [
+{
+"st": "QLD",
+"name": "Queensland Government FAD list",
+"url": "https://www.qld.gov.au/recreation/activities/boating-fishing/rec-fishing/fish-aggregating-devices/locations",
+"licence": "© State of Queensland, CC BY 4.0 (qld.gov.au copyright statement)"
+},
+{
+"st": "NSW",
+"name": "NSW DPIRD Fish Aggregating Devices (FishSmart)",
+"url": "https://www.dpi.nsw.gov.au/fishing/recreational/resources/fish-aggregating-devices",
+"licence": "© State of NSW. Coords fetched 2026-10-21 (WGS84); FADs south of Forster were listed as 'retrieved for winter maintenance' with no published position yet"
+},
+{
+"st": "VIC",
+"name": "Victorian Fisheries Authority via Safe Transport Victoria Notices to Mariners",
+"url": "https://safetransport.vic.gov.au/on-the-water/waterways/notice-to-mariners/west-bass-strait-lorne-aireys-inlet/",
+"licence": "© State of Victoria. NTM 002(T) of 2026; VFA Torquay FAD position"
 }
 ]
 }

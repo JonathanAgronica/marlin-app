@@ -56,7 +56,7 @@ PY
 [[ "$summary" == ALLFAIL* ]] && { GIT checkout -q -- data; fail "all sources failed: ${summary#ALLFAIL } (last good data kept)"; }
 
 # ---- commit + push only if changed ----
-GIT add data/ocean.json data/bathy.json data/depth_grid.json
+GIT add -A data/ocean.json data/tiles
 if GIT diff --cached --quiet; then date +%s >"$LAST"; echo "REFRESHED $summary (no change)"; exit 0; fi
 GIT commit -q -m "ocean data: $(date -u +%Y-%m-%dT%H:%MZ) (box refresh)" >>"$LOG" 2>&1 || fail "git commit failed"
 if ! GIT push -q >>"$LOG" 2>&1; then

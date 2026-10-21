@@ -5,17 +5,31 @@ Sources (all free, public, no login):
   Chl  : NOAA-20 VIIRS chlorophyll-a weekly NRT via NOAA CoastWatch ERDDAP (nesdisVHNnoaa20chlaWeekly_Lon0360)
   Curr : IMOS OceanCurrent GSLA NRT (geostrophic UCUR/VCUR + sea level anomaly) via AODN THREDDS OPeNDAP
   Depth: NOAA NCEI ETOPO1 via NOAA CoastWatch ERDDAP (etopo180)  (bathy.json, cached)
-Writes data/ocean.json (grid + derived fronts) and data/bathy.json (contours).
+Writes data/tiles/<id>.json (grid + fronts per region), <id>_bathy.json, <id>_depth.json, and the small index data/ocean.json.
 Every source is optional: a failed fetch keeps that layer null and the app says so."""
 import csv, io, json, math, os, re, sys, time, urllib.request, datetime as dt
 import numpy as np
 from scipy import ndimage
 
-LAT0, LAT1, LON0, LON1, STEP = -27.60, -23.60, 151.60, 154.60, 0.04
-LATS = np.round(np.arange(LAT0, LAT1 + 1e-9, STEP), 2)
-LONS = np.round(np.arange(LON0, LON1 + 1e-9, STEP), 2)
-NY, NX = len(LATS), len(LONS)
+# Region tiles (lazy-loaded by the app). (id, name, lat0, lat1, lon0, lon1); 0.05 deg grid (MUR stride 5).
+TILES = [
+    ('ncq', 'Cape York to Cairns', -17.50, -12.30, 143.00, 147.50),
+    ('ccq', 'Townsville to Whitsundays', -21.50, -17.50, 145.50, 152.00),
+    ('caq', 'Mackay to Bundaberg', -25.50, -21.50, 148.50, 154.50),
+    ('seq', 'Fraser to Gold Coast', -29.50, -25.50, 152.50, 155.50),
+    ('nnsw', 'Tweed to Port Stephens', -33.50, -29.50, 151.00, 155.00),
+    ('snsw', 'Sydney to Eden', -37.50, -33.50, 149.50, 153.50),
+    ('bass', 'East Gippsland to Port Phillip', -39.50, -37.50, 143.80, 151.00),
+]
+STEP = 0.05
+LAT0 = LAT1 = LON0 = LON1 = None; LATS = LONS = None; NY = NX = 0
+def set_tile(t):
+    global LAT0, LAT1, LON0, LON1, LATS, LONS, NY, NX
+    _, _, LAT0, LAT1, LON0, LON1 = t
+    LATS = np.round(np.arange(LAT0, LAT1 + 1e-9, STEP), 2); LONS = np.round(np.arange(LON0, LON1 + 1e-9, STEP), 2)
+    NY, NX = len(LATS), len(LONS)
 OUT = os.path.join(os.path.dirname(__file__), '..', 'data')
+TD = os.path.join(OUT, 'tiles')
 ERD = 'https://coastwatch.pfeg.noaa.gov/erddap/griddap/'
 UA = {'User-Agent': 'macs-marlin/1.0 (github.com/JonathanAgronica/marlin-app)'}
 
@@ -28,6 +42,7 @@ def get(url, tries=None, timeout=None):
             with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
                 return r.read().decode('utf8', 'ignore')
         except Exception as e:
+            if getattr(e, 'code', None) in (400, 404): raise RuntimeError(f'HTTP {e.code} ' + url[:120])  # dataset/region not served: no point retrying
             print('  retry', i + 1, url[:110], e, file=sys.stderr); time.sleep(5 * (i + 1))
     raise RuntimeError('fetch failed ' + url[:120])
 
@@ -49,7 +64,7 @@ def fnum(x):
     except: return float('nan')
 
 def fetch_sst():
-    q = f'analysed_sst[(last)][({LAT0}):4:({LAT1})][({LON0}):4:({LON1})]'
+    q = f'analysed_sst[(last)][({LAT0}):5:({LAT1})][({LON0}):5:({LON1})]'
     url = ERD + 'jplMURSST41.csv?' + urllib.parse.quote(q, safe='():[]')
     rows = erddap_csv(url)
     t = rows[0][0]
@@ -97,7 +112,29 @@ def opendap_arrays(txt):
         res.setdefault(k, a.ravel() if a.shape[0] == 1 else a)
     return res
 
+_CUR = {}
 def fetch_currents():
+    if 'raw' not in _CUR:
+        try: _CUR['raw'] = _fetch_cur_raw()
+        except Exception as e: _CUR['raw'] = e
+    if isinstance(_CUR['raw'], Exception): raise _CUR['raw']
+    la, lo, jj, ii, raw, das, t, src = _CUR['raw']
+    def attr(var, a):
+        m = re.search(var + r' \{.*?' + a + r' ([-\d.eE+]+);', das, re.S); return float(m.group(1)) if m else None
+    out = {}
+    for v in ('UCUR', 'VCUR', 'GSLA'):
+        a = np.array(raw[v], dtype=float).reshape(len(jj), len(ii))
+        fv, sf, ao = attr(v, '_FillValue'), attr(v, 'scale_factor') or 1.0, attr(v, 'add_offset') or 0.0
+        if fv is not None: a[a == fv] = np.nan
+        a = a * sf + ao
+        sla, slo = la[jj], lo[ii]
+        fj = np.interp(LATS, sla, np.arange(len(sla))) if sla[0] < sla[-1] else np.interp(LATS, sla[::-1], np.arange(len(sla))[::-1])
+        fi = np.interp(LONS, slo, np.arange(len(slo)))
+        J, I = np.meshgrid(fj, fi, indexing='ij')
+        out[v] = ndimage.map_coordinates(a, [J, I], order=1, cval=np.nan, mode='nearest')
+    return out, t, src
+
+def _fetch_cur_raw():
     base = 'https://thredds.aodn.org.au/thredds/'
     yr = dt.datetime.now(dt.timezone.utc).year
     paths = []
@@ -111,23 +148,12 @@ def fetch_currents():
         m = re.search(var + r' \{.*?' + a + r' ([-\d.eE+]+);', das, re.S); return float(m.group(1)) if m else None
     co = opendap_arrays(get(base + 'dodsC/' + p + '.ascii?LATITUDE,LONGITUDE'))
     la, lo = co['LATITUDE'], co['LONGITUDE']
-    jj = np.where((la >= LAT0 - 0.4) & (la <= LAT1 + 0.4))[0]; ii = np.where((lo >= LON0 - 0.4) & (lo <= LON1 + 0.4))[0]
+    A0, A1 = min(t[2] for t in TILES), max(t[3] for t in TILES); O0, O1 = min(t[4] for t in TILES), max(t[5] for t in TILES)
+    jj = np.where((la >= A0 - 0.4) & (la <= A1 + 0.4))[0]; ii = np.where((lo >= O0 - 0.4) & (lo <= O1 + 0.4))[0]
     sl = f'[0][{jj[0]}:1:{jj[-1]}][{ii[0]}:1:{ii[-1]}]'
     raw = opendap_arrays(get(base + 'dodsC/' + p + '.ascii?' + ','.join(v + sl for v in ('UCUR', 'VCUR', 'GSLA'))))
-    out = {}
-    for v in ('UCUR', 'VCUR', 'GSLA'):
-        a = np.array(raw[v], dtype=float).reshape(len(jj), len(ii))
-        fv, sf, ao = attr(v, '_FillValue'), attr(v, 'scale_factor') or 1.0, attr(v, 'add_offset') or 0.0
-        if fv is not None: a[a == fv] = np.nan
-        a = a * sf + ao
-        # bilinear onto app grid
-        sla, slo = la[jj], lo[ii]
-        fj = np.interp(LATS, sla, np.arange(len(sla))) if sla[0] < sla[-1] else np.interp(LATS, sla[::-1], np.arange(len(sla))[::-1])
-        fi = np.interp(LONS, slo, np.arange(len(slo)))
-        J, I = np.meshgrid(fj, fi, indexing='ij')
-        out[v] = ndimage.map_coordinates(a, [J, I], order=1, cval=np.nan, mode='nearest')
     t = re.search(r'_(\d{8})T', p).group(1)
-    return out, f'{t[:4]}-{t[4:6]}-{t[6:]}', base + 'dodsC/' + p
+    return la, lo, jj, ii, raw, das, f'{t[:4]}-{t[4:6]}-{t[6:]}', base + 'dodsC/' + p
 
 def fetch_bathy():
     q = f'altitude[({LAT0}):1:({LAT1})][({LON0}):1:({LON1})]'
@@ -142,7 +168,7 @@ def contours(la, lo, Z, levels):
     cs = plt.contour(lo, la, -Z, levels=levels)
     feats = []
     for lev, segs in zip(cs.levels, cs.allsegs):
-        lines = [[[round(float(x), 4), round(float(y), 4)] for x, y in s[::1]] for s in segs if len(s) > 4]
+        lines = [[[round(float(x), 3), round(float(y), 3)] for x, y in list(s[::2]) + [s[-1]]] for s in segs if len(s) > 6]
         if lines: feats.append({'depth': int(lev), 'lines': lines})
     plt.close('all'); return feats
 
@@ -167,24 +193,24 @@ def dist_km(mask, valid):
 def r(a, nd=2):
     return [[None if not np.isfinite(v) else round(float(v), nd) for v in row] for row in a]
 
-def main():
-    os.makedirs(OUT, exist_ok=True)
-    meta = {'built': dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), 'grid': {'lat0': LAT0, 'lon0': LON0, 'step': STEP, 'ny': NY, 'nx': NX}, 'sources': {}, 'errors': {}}
+def do_tile(T):
+    set_tile(T); tid = T[0]
+    meta = {'tile': tid, 'name': T[1], 'bounds': [LAT0, LAT1, LON0, LON1], 'built': dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), 'grid': {'lat0': LAT0, 'lon0': LON0, 'step': STEP, 'ny': NY, 'nx': NX}, 'sources': {}, 'errors': {}}
     prev = {}
-    pf = os.path.join(OUT, 'ocean.json')
+    pf = os.path.join(TD, tid + '.json')
     if os.path.exists(pf):
         try: prev = json.load(open(pf))
         except Exception: prev = {}
     layers = {}
     # bathymetry (static, cached)
-    bf = os.path.join(OUT, 'bathy.json')
-    if not os.path.exists(bf) or not os.path.exists(os.path.join(OUT, 'depth_grid.json')):
+    bf = os.path.join(TD, tid + '_bathy.json'); dg = os.path.join(TD, tid + '_depth.json')
+    if not os.path.exists(bf) or not os.path.exists(dg):
         la, lo, Z = fetch_bathy()
-        json.dump({'source': 'NOAA NCEI ETOPO1 (1 arc-minute) via NOAA CoastWatch ERDDAP etopo180', 'contours': contours(la, lo, Z, [30, 50, 100, 200, 500, 1000, 2000, 3000])}, open(bf, 'w'), separators=(',', ':'))
+        json.dump({'source': 'NOAA NCEI ETOPO1 (1 arc-minute) via NOAA CoastWatch ERDDAP etopo180', 'contours': contours(la, lo, Z, [50, 100, 200, 500, 1000, 2000, 3000])}, open(bf, 'w'), separators=(',', ':'))
         J, I = np.meshgrid(np.interp(LATS, la, np.arange(len(la))), np.interp(LONS, lo, np.arange(len(lo))), indexing='ij')
         D = -ndimage.map_coordinates(Z, [J, I], order=1)
-        json.dump(r(np.where(D > 0, D, -1), 0), open(os.path.join(OUT, 'depth_grid.json'), 'w'), separators=(',', ':'))
-    depth = np.array(json.load(open(os.path.join(OUT, 'depth_grid.json'))), dtype=float)
+        json.dump(r(np.where(D > 0, D, -1), 0), open(dg, 'w'), separators=(',', ':'))
+    depth = np.array(json.load(open(dg)), dtype=float)
     layers['depth'] = depth
     meta['sources']['depth'] = {'name': 'NOAA NCEI ETOPO1 via CoastWatch ERDDAP (etopo180)', 'url': ERD + 'etopo180.html'}
     land = depth <= 0
@@ -237,7 +263,28 @@ def main():
     nd = {'sst': 2, 'chl': 3, 'depth': 0, 'ucur': 2, 'vcur': 2, 'gsla': 2, 'sstgrad': 3, 'dfront': 1, 'chlgrad': 3, 'speed': 2, 'curedge': 4, 'slagrad': 4}
     for k, a in layers.items(): out[k] = r(a, nd.get(k, 3))
     json.dump(out, open(pf + '.tmp', 'w'), separators=(',', ':')); os.replace(pf + '.tmp', pf)  # atomic: a killed run never leaves a half file
-    print('wrote', pf, os.path.getsize(pf) // 1024, 'KB', 'errors:', meta['errors'])
+    print('wrote', pf, os.path.getsize(pf) // 1024, 'KB', 'errors:', meta['errors'], flush=True)
+    return meta
+
+def main():
+    os.makedirs(TD, exist_ok=True)
+    t0 = time.time()
+    try: _CUR['raw'] = _fetch_cur_raw()          # one THREDDS request for the whole coast, shared by the tile workers
+    except Exception as e: _CUR['raw'] = e; print('FAIL cur', e, file=sys.stderr)
+    print('currents', f'{time.time()-t0:.0f}s', flush=True)
+    import multiprocessing as mp
+    with mp.get_context('fork').Pool(int(os.environ.get('MARLIN_WORKERS', '4'))) as pool: metas = pool.map(do_tile, TILES, chunksize=1)
+    print('tiles done', f'{time.time()-t0:.0f}s')
+    src, err = {}, {}
+    for m in metas:
+        for k, v in m['sources'].items():
+            if k not in src or (v.get('time') or '') < (src[k].get('time') or ''): src[k] = dict(v)
+            if v.get('stale'): src[k]['stale'] = True
+        for k, v in m['errors'].items(): err[k] = m['tile'] + ': ' + v
+    idx = {'meta': {'built': dt.datetime.now(dt.timezone.utc).isoformat(timespec='minutes'), 'sources': src, 'errors': err, 'step': STEP},
+           'tiles': [{'id': m['tile'], 'name': m['name'], 'bounds': m['bounds'], 'grid': m['grid'], 'sources': m['sources'], 'errors': m['errors']} for m in metas]}
+    pf = os.path.join(OUT, 'ocean.json'); json.dump(idx, open(pf + '.tmp', 'w'), separators=(',', ':')); os.replace(pf + '.tmp', pf)
+    print('index ok', f'{time.time()-t0:.0f}s', 'errors:', err)
 
 if __name__ == '__main__':
     import urllib.parse
