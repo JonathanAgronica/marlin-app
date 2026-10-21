@@ -1,0 +1,28 @@
+name: ocean-data
+# Refresh SST / chlorophyll / currents twice daily (06:15 and 18:15 AEST = 20:15 and 08:15 UTC). Commits data/ocean.json; Pages redeploys.
+on:
+  schedule:
+    - cron: '15 20 * * *'
+    - cron: '15 8 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: { group: ocean-data, cancel-in-progress: false }
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install numpy scipy matplotlib
+      - run: python scripts/fetch_ocean.py
+      - name: commit if changed
+        run: |
+          git config user.name "marlin-data-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/ocean.json data/bathy.json data/depth_grid.json
+          git diff --cached --quiet && echo "no change" && exit 0
+          git commit -m "ocean data: $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push

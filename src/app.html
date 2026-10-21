@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Mac's Marlin</title>
+<meta name="theme-color" content="#0b2740"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Mac's Marlin">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icons/icon-180.png"><link rel="icon" href="icons/icon-64.png">
+<link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+<style>/*CSS*/</style></head>
+<body>
+<header><b>🎣 Mac's Marlin</b><span id="dataAge" class="mut"></span></header>
+<main>
+<section id="t-map" class="tab on">
+  <div id="map"></div>
+  <div class="mapbar">
+    <select id="layerSel" aria-label="Map layer"><option value="score">Bite score</option><option value="sst">Sea temp (SST)</option><option value="chl">Chlorophyll</option><option value="speed">Current speed</option><option value="none">No shading</option></select>
+    <input id="mapTime" type="range" min="0" max="167" value="0" aria-label="Score time"><span id="mapTimeL" class="mut"></span>
+  </div>
+  <div id="legend" class="legend"></div>
+  <details class="card"><summary>Layers</summary>
+    <label><input type="checkbox" id="lyFront" checked> Temperature breaks (fronts)</label>
+    <label><input type="checkbox" id="lyCur" checked> Current arrows (EAC / eddies)</label>
+    <label><input type="checkbox" id="lyBathy" checked> Depth contours (shelf edge bold = 200 m)</label>
+    <label><input type="checkbox" id="lyFad" checked> Public FADs</label>
+    <label><input type="checkbox" id="lyMine" checked> My marks (phone only)</label>
+    <p class="mut">Tap the map for the score breakdown at that spot. Long-press (or tap, then "Add mark here") to save a private mark.</p>
+  </details>
+  <details class="card"><summary>Data &amp; sources</summary><div id="srcList"></div></details>
+</section>
+
+<section id="t-score" class="tab">
+  <div class="card row"><label>Day <select id="scDay"></select></label><label>Show <select id="scWhich"><option value="all">All marks</option><option value="mine">My marks</option><option value="fad">Public FADs</option></select></label></div>
+  <div id="scTop" class="card"></div>
+  <ul id="scList" class="list"></ul>
+  <details class="card" id="method"><summary>Accuracy &amp; method</summary><div id="methodBody"></div></details>
+</section>
+
+<section id="t-plan" class="tab">
+  <div class="card row">
+    <label>Port <select id="plPort"></select></label>
+    <label>Day <select id="plDay"></select></label>
+  </div>
+  <div id="plVerdict" class="card"></div>
+  <div id="plHours" class="card"></div>
+  <details class="card"><summary>Bar crossing</summary><div id="plBar"></div></details>
+  <details class="card"><summary>My boat &amp; limits</summary>
+    <div class="grid2">
+      <label>Cruise speed (kn)<input id="lmSpeed" type="number" min="5" max="50"></label>
+      <label>Max range (nm)<input id="lmRange" type="number" min="5" max="120"></label>
+      <label>Wind go ≤ (kn)<input id="lmWind" type="number"></label>
+      <label>Wind no-go ≥ (kn)<input id="lmWindX" type="number"></label>
+      <label>Gust no-go ≥ (kn)<input id="lmGust" type="number"></label>
+      <label>Sea+swell go ≤ (m)<input id="lmWave" type="number" step="0.1"></label>
+      <label>Sea+swell no-go ≥ (m)<input id="lmWaveX" type="number" step="0.1"></label>
+      <label>Min swell period (s)<input id="lmPer" type="number"></label>
+    </div><p class="mut">Saved on this phone. Defaults suit a ~6–7 m trailer boat; set your own.</p>
+  </details>
+</section>
+
+<section id="t-marks" class="tab">
+  <div class="card">
+    <h3>Add a private mark</h3>
+    <div class="grid2">
+      <label class="span2">Name<input id="mkName" placeholder="e.g. The 500 m ledge"></label>
+      <label>Lat<input id="mkLat" inputmode="decimal" placeholder="-24.512 or 24 30.72 S"></label>
+      <label>Lon<input id="mkLon" inputmode="decimal" placeholder="153.10 or 153 06.0 E"></label>
+      <label>Depth (m)<input id="mkDepth" type="number" inputmode="numeric"></label>
+      <label>Type<select id="mkType"><option>ledge</option><option>canyon</option><option>FAD</option><option>wide grounds</option><option>seamount</option><option>other</option></select></label>
+    </div>
+    <div class="row"><button id="mkGps">📍 Use my GPS</button><button class="pri" id="mkAdd">Save mark</button></div>
+    <p class="mut">🔒 Marks are stored only in this phone's browser storage. They are never uploaded or published.</p>
+  </div>
+  <ul id="mkList" class="list"></ul>
+  <details class="card"><summary>Public FADs (qld.gov.au)</summary><div id="fadList"></div></details>
+  <details class="card"><summary>Backup / move to a new phone</summary>
+    <div class="row"><button id="mkExport">Export marks (JSON)</button><label class="btn">Import JSON<input type="file" id="mkImport" accept="application/json" hidden></label></div>
+  </details>
+</section>
+
+<section id="t-log" class="tab">
+  <div class="card">
+    <h3>Log a fish</h3>
+    <div class="grid2">
+      <label>When<input id="lgWhen" type="datetime-local"></label>
+      <label>Species<select id="lgSp"><option>black marlin</option><option>blue marlin</option><option>striped marlin</option><option>sailfish</option><option>other</option></select></label>
+      <label>Outcome<select id="lgOut"><option>tagged &amp; released</option><option>released (no tag)</option><option>lost / pulled hook</option><option>kept</option></select></label>
+      <label>Tag no.<input id="lgTag"></label>
+      <label>Est. size<input id="lgSize" placeholder="e.g. 25 kg / 180 cm"></label>
+      <label>Lure / bait<input id="lgLure" placeholder="skirted lure, live tuna…"></label>
+      <label class="span2">Where<select id="lgMark"></select></label>
+      <label>SST °C<input id="lgSst" type="number" step="0.1"></label>
+      <label>Depth (m)<input id="lgDepth" type="number"></label>
+      <label class="span2">Notes<input id="lgNotes"></label>
+    </div>
+    <div class="row"><button id="lgGps">📍 GPS here</button><button class="pri" id="lgAdd">Save catch</button></div>
+    <p class="mut">🔒 Private by default: kept on this phone only. SST fills from the satellite grid at the spot.</p>
+  </div>
+  <div id="lgStats" class="card"></div>
+  <ul id="lgList" class="list"></ul>
+  <div class="card row"><button id="lgJson">Export JSON</button><button id="lgCsv">Export CSV</button><label class="btn">Import JSON<input type="file" id="lgImport" accept="application/json" hidden></label></div>
+</section>
+</main>
+<nav>
+  <button data-t="map" class="on">🗺️<span>Ocean</span></button>
+  <button data-t="score">🎯<span>Score</span></button>
+  <button data-t="plan">⛵<span>Plan</span></button>
+  <button data-t="marks">📌<span>Marks</span></button>
+  <button data-t="log">📒<span>Log</span></button>
+</nav>
+<script src="vendor/leaflet/leaflet.js"></script>
+<script>window.FADS=/*FADS*/;window.BUILD='/*BUILD*/';</script>
+<script>/*ASTRO*/</script>
+<script>/*APP*/</script>
+</body></html>
