@@ -38,8 +38,8 @@ GIT pull -q --rebase >>"$LOG" 2>&1 || fail "git pull --rebase failed (see $LOG)"
 # ---- fetch (per-request 60 s x2 tries, whole fetch killed at the deadline minus push time) ----
 budget=$(( $(left) - 40 )); [ $budget -gt 60 ] || fail "no time left"
 ( cd "$REPO" && MARLIN_HTTP_TIMEOUT=60 MARLIN_HTTP_TRIES=2 timeout -k 5 "$budget" python3 scripts/fetch_ocean.py ) >"$LOG" 2>&1
-rc=$?; [ $rc -eq 124 ] || [ $rc -eq 137 ] && fail "fetch timed out after ${budget}s (last good data kept)"
-[ $rc -eq 0 ] || fail "fetch script error rc=$rc: $(tail -1 "$LOG" | cut -c1-120) (last good data kept)"
+rc=$?; [ $rc -eq 124 ] || [ $rc -eq 137 ] && { GIT checkout -q -- data; fail "fetch timed out after ${budget}s (last good data kept)"; }
+[ $rc -eq 0 ] || { GIT checkout -q -- data; fail "fetch script error rc=$rc: $(tail -1 "$LOG" | cut -c1-120) (last good data kept)"; }
 
 summary=$(python3 - "$REPO/data/ocean.json" <<'PY'
 import json,sys,datetime as d
